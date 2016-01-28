@@ -1,0 +1,28 @@
+{
+  "name":    "pool-stack",
+  "version": "0.0.0",
+  "private": true,
+  "main":    "server.js",
+  "scripts": {
+    "start":  "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log server.js",
+    "stop":   "./node_modules/.bin/forever stop server.js",
+    "status": "./node_modules/.bin/forever list",
+    "test":   "./node_modules/.bin/mocha -R spec test/server.js test/**/*.js"
+  },
+  "dependencies": {
+    "restify": "^4.0.3",
+    "bunyan": "^1.5.1",
+    "config": "^1.19.0",
+    "json5":   "^0.4.0",
+    "forever": "^0.15.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.1",
+    "chai": "^3.4.1",
+    "supertest": "^1.1.0",
+    "bunyan-prettystream": "hadfieldn/node-bunyan-prettystream"
+  },
+  "engine": {
+    "node": ">=0.10"
+  }
+}
