@@ -1,6 +1,10 @@
 /* global describe:true, before:true, after:true, it:true, global:true,
  baseURL:true, process:true */
 
+'use strict';
+
+
+process.env.NODE_ENV = 'test';
 var config = require('config'),
     app = require('../app'),
     bunyan = require('bunyan'),
@@ -10,10 +14,6 @@ var config = require('config'),
 var server;
 
 before(function (done) {
-
-
-// verbose variable
-    var NODE_ENV = 'test';
 
     var bunyanToConsole = new PrettyStream();
     bunyanToConsole.pipe(process.stdout);
@@ -33,6 +33,21 @@ before(function (done) {
     var port = config.get('server.port');
     server.listen(port, function () {
         logger.info('%s listening at %s', server.name, server.url);
+    });
+
+    server.on('NotFound', function (req, res, next) {
+        if (logger) {
+            logger.debug('404', 'No route that matches request for ' + req.url);
+        }
+        res.send(404, req.url + ' was not found');
+        return next();
+    });
+
+    server.on('uncaughtException', function (req, res, route, err) {
+        if (logger) {
+            logger.error('Uncaught error', err);
+        }
+        res.send(500, 'Error');
     });
 
     global.baseURL = 'http://localhost:' + port;

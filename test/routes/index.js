@@ -8,7 +8,7 @@ var should  = require('chai').should(),
 
 describe("/", function () {
 
-  it('should return a message', function (done) {
+  it('should respond to GET returning a message', function (done) {
     request(baseURL)
       .get('/')
       .set('Accept', 'application/json')

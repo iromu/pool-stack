@@ -1,4 +1,4 @@
-module.exports = function(server, logger) {
+module.exports = function(server) {
 
   // Sample route
   server.get('/ping', function (req, res, next) {
