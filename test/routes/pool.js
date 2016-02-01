@@ -6,9 +6,8 @@ var should = require('chai').should(),
     request = require('supertest');
 
 var pools = [
-    {name: 'A', members: ['1', '2', '3', '4']},
-    {name: 'B', members: ['1asd', 'qwe', 'afasfaf', 'dsfdsf']},
-    {name: 'C__', members: ['1__¨^"$', '2¨E^', '3*"·^ç´', '4Ç"·^']}
+    {name: 'REPTILES', members: ['Turtle', 'Tortoise', 'Snake', 'Cobra']},
+    {name: 'BIRDS', members: ['Vulture', 'Toucan', 'Thick-Billed Parrot', 'Steller\'s Sea-Eagle']}
 ];
 
 var seedPools = function (done) {
@@ -146,8 +145,20 @@ describe("/pool", function () {
 
 
     describe("/pool member operations", function () {
-        before(seedPools);
         pools.forEach(function (pool) {
+            before(function (done) {
+                request(baseURL)
+                    .put('/pool/' + pool.name)
+                    .send(pool.members)
+                    .expect('Content-Type', 'application/json')
+                    .expect(200)
+                    .end(function (err, res) {
+                        if (err) console.log('ERROR IN THE SET UP. pool ' + pool.name);
+                        res.body.should.deep.equal(pool.members);
+                        return done();
+                    });
+            });
+
             describe('POST /pool/' + pool.name, function () {
                 it('should return a lock', function (done) {
                     request(baseURL)
@@ -163,11 +174,9 @@ describe("/pool", function () {
                         });
                 });
             });
-        });
 
-        pools.forEach(function (pool) {
-            describe('DELETE /pool/' + pool.name + '/lock/:member', function () {
-                var lockResponse;
+            describe('DELETE /pool/' + pool.name + '/lock/:resource', function () {
+                var lockResponse = 'UNSET';
 
                 before(function (done) {
                     request(baseURL)
@@ -180,11 +189,11 @@ describe("/pool", function () {
                             res.body.should.be.an('string');
                             res.body.should.match(/.+/);
                             lockResponse = res.body;
-                             done();
+                            done();
                         });
                 });
 
-                it('should release a lock ' + lockResponse, function (done) {
+                it('should release a lock over the resource ' + lockResponse, function (done) {
                     request(baseURL)
                         .delete('/pool/' + pool.name + '/lock/' + lockResponse)
                         .set('Accept', 'application/json')
