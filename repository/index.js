@@ -72,8 +72,8 @@
                     return client.smembersAsync(prefix + key);
                 }
             },
-            addSet: function (key) {
-                return client.saddAsync(prefix + key);
+            addSet: function (key, member) {
+                return client.saddAsync(prefix + key, member);
             },
             pop: function (key) {
                 return client.spopAsync(prefix + key);

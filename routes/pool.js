@@ -2,15 +2,7 @@
 
 var errors = require('restify-errors');
 
-
-/** @namespace req.params */
 module.exports = function (server, repository, logger) {
-
-    function handleError(res, next, err) {
-        logger.error(err);
-        res.send(err);
-        return next();
-    }
 
     var controller = {
         getPool: function (req, res, next) {
@@ -78,7 +70,7 @@ module.exports = function (server, repository, logger) {
                 var sendResult = function (result) {
                     if (!result)  return next(new errors.NotFoundError());
                     var ob = {};
-                    ob[req.params.name] = JSON.parse(result);
+                    ob[req.params.name] = result;
                     res.send(result);
                     return next();
                 };
