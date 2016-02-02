@@ -1,5 +1,19 @@
 # pool-stack
 
+[![Build Status][travis-image]][travis-url]
+[![Dependency Status][dep-image]][dep-url]
+[![Dev Dependency Status][dev-dep-image]][dev-dep-url]
+
+[travis-image]: https://travis-ci.org/iromu/pool-stack.svg?branch=badges
+[travis-url]: https://travis-ci.org/iromu/pool-stack
+
+[dep-image]: https://david-dm.org/iromu/pool-stack.svg
+[dep-url]: https://david-dm.org/iromu/pool-stack#info=dependencies&view=table
+
+[dev-dep-image]: https://david-dm.org/iromu/pool-stack/dev-status.svg
+[dev-dep-url]: https://david-dm.org/iromu/pool-stack#info=devDependencies&view=table
+
+
 This project runs a RESTful server, providing endpoints for acquiring and releasing "locks" over a pool of "resources".
 See `test/routes/pool.js` for the full set of implemented endpoints.
 
