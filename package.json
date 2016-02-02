@@ -1,7 +1,6 @@
 {
   "name": "pool-stack",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "main": "server.js",
   "scripts": {
     "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log server.js",
@@ -40,6 +39,11 @@
     "supertest": "^1.1.0"
   },
   "engine": {
-    "node": ">=0.10"
-  }
+    "node": ">=4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iromu/pool-stack"
+  },
+  "license": "SEE LICENSE IN LICENSE.md"
 }
