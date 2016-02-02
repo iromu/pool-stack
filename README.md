@@ -4,7 +4,7 @@
 [![Dependency Status][dep-image]][dep-url]
 [![Dev Dependency Status][dev-dep-image]][dev-dep-url]
 
-[travis-image]: https://travis-ci.org/iromu/pool-stack.svg?branch=badges
+[travis-image]: https://travis-ci.org/iromu/pool-stack.svg?branch=develop
 [travis-url]: https://travis-ci.org/iromu/pool-stack
 
 [dep-image]: https://david-dm.org/iromu/pool-stack.svg
