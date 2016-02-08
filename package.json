@@ -10,7 +10,7 @@
     "status": "./node_modules/.bin/forever list",
     "test": "./node_modules/.bin/mocha -R spec test/server.js test/**/*.js",
     "coverage": "./node_modules/.bin/istanbul cover _mocha --  -R spec test/server.js test/**/*.js",
-    "ci-test": "./node_modules/.bin/mocha -R xunit test/server.js test/**/*.js > target/test-reports.xml",
+    "ci-test": "npm run metrics && ./node_modules/.bin/mocha -R xunit test/server.js test/**/*.js > target/test-reports.xml",
     "pretest": "npm run lint",
     "lint": "./node_modules/.bin/jshint ./app/**",
     "metrics:plato": "./node_modules/.bin/plato -r -d target/report target/app",
