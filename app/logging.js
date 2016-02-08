@@ -18,7 +18,7 @@ exports.createLogger = createLogger;
  */
 function createLogger(settings) {
 
-    var pkg = require(path.join(__dirname, 'package')),
+    var pkg = require(path.join(__dirname, '../package')),
         appName = pkg.name,
         appVersion = pkg.version,
         logDir = settings.dir || path.join(__dirname, 'logs'),

@@ -69,5 +69,3 @@ function run(cluster) {
     }
 
 }
-
-run();
