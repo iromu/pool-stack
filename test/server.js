@@ -6,7 +6,7 @@
 
 process.env.NODE_ENV = 'test';
 var config = require('config'),
-    app = require('../app'),
+    app = require('../app/app'),
     bunyan = require('bunyan'),
     PrettyStream = require('bunyan-prettystream'),
     request = require('supertest');
@@ -21,7 +21,7 @@ before(function (done) {
     var logger = bunyan.createLogger({
         name: 'testLogger',
         streams: [{
-            level: 'error',
+            level: 'warn',
             type: 'raw',
             stream: bunyanToConsole
         }]
@@ -37,7 +37,7 @@ before(function (done) {
 
     server.on('NotFound', function (req, res, next) {
         if (logger) {
-            logger.debug('404', 'No route that matches request for ' + req.url);
+            logger.debug('404', 'TEST No route that matches request for ' + req.method + ' ' + req.url);
         }
         res.send(404, req.url + ' was not found');
         return next();

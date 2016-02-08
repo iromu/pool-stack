@@ -3,52 +3,54 @@
 'use strict';
 
 var should = require('chai').should(),
-    request = require('supertest');
+    request = require('supertest'),
+    async = require('async'), querystring = require("querystring");
 
 var pools = [
-    {name: 'REPTILES', members: ['Turtle', 'Tortoise', 'Snake', 'Cobra']},
-    {name: 'BIRDS', members: ['Vulture', 'Toucan', 'Thick-Billed Parrot', 'Steller\'s Sea-Eagle']}
+    {
+        name: 'REPTILES',
+        members: ['Turtle', 'Tortoise', 'Cobra', 'Snake']
+            .sort()
+    },
+    {
+        name: 'BIRDS',
+        members: ['Steller\'s Sea-Eagle', 'Thick-Billed Parrot', 'Toucan', 'Vulture']
+            .sort()
+    }
 ];
 
-var seedPools = function (done) {
-    var counter = 0;
-    pools.forEach(function (pool) {
+var shouldReturnALockConcurrent = function (pool, parallelRuns, done) {
+    var actualRuns = 0;
+    var membersAcquired = [];
+    var asyncTask = function (callback) {
         request(baseURL)
-            .put('/pool/' + pool.name)
-            .send(pool.members)
+            .post('/pool/' + pool.name + '/lock')
+            .set('Accept', 'application/json')
             .expect('Content-Type', 'application/json')
             .expect(200)
             .end(function (err, res) {
-                if (err) console.log('ERROR IN THE SET UP. pool ' + pool.name);
-                res.body.should.deep.equal(pool.members);
-                counter++;
+                if (err) return callback(err);
+                res.body.should.be.an('string');
+                res.body.should.match(/.+/);
+                membersAcquired.should.not.include(res.body);
+                membersAcquired.push(res.body);
+                callback(null, null);
             });
-
-    });
-    var checkSetupInterval;
-
-    function checkSetup() {
-        if (counter >= pools.length) {
-            clearInterval(checkSetupInterval);
-            return done();
-        }
+    };
+    var asyncTasks = [];
+    while (parallelRuns > actualRuns) {
+        actualRuns++;
+        asyncTasks.push(asyncTask);
     }
-
-    checkSetupInterval = setInterval(checkSetup, 100);
-    setTimeout(done, 10000);
+    async.parallel(asyncTasks, function (err, result) {
+        if (err) return done(err);
+        done();
+    });
 };
-
 describe("/pool", function () {
 
+    describe("/pool expected errors", function () {
 
-    var shouldBeExpectedPoolResponse = function (res, poolName, poolMembers) {
-        res.body.should.be.an('object');
-        res.body.should.have.ownProperty(poolName);
-        res.body[poolName].should.deep.equal(poolMembers);
-    };
-
-    describe("/pool bulk operations", function () {
-        before(seedPools);
         describe('GET /pool/NONE', function () {
             it('should return 404 (Not Found) }', function (done) {
                 request(baseURL)
@@ -87,8 +89,30 @@ describe("/pool", function () {
                     });
             });
         });
+    });
 
+    describe("/pool bulk operations", function () {
         pools.forEach(function (pool) {
+            var payload = {[pool.name]: pool.members};
+            var payloadAsString = JSON.stringify(payload);
+            describe('POST /pool with payload ' + payloadAsString, function () {
+                it('should return ' + payloadAsString, function (done) {
+                    request(baseURL)
+                        .post('/pool')
+                        .send(payload)
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', 'application/json')
+                        .expect(200)
+                        .end(function (err, res) {
+                            if (err) return done(err);
+                            res.body.should.be.an('object');
+                            res.body.should.have.ownProperty(pool.name);
+                            res.body[pool.name].should.deep.equal(pool.members);
+                            return done();
+                        });
+                });
+            });
+
             describe('PUT /pool/' + pool.name, function () {
                 it('should return ' + JSON.stringify(pool.members), function (done) {
                     request(baseURL)
@@ -103,29 +127,7 @@ describe("/pool", function () {
                         });
                 });
             });
-        });
 
-        pools.forEach(function (pool) {
-            var payload = {[pool.name]: pool.members};
-            var payloadAsString = JSON.stringify(payload);
-            describe('POST /pool with payload ' + payloadAsString, function () {
-                it('should return ' + payloadAsString, function (done) {
-                    request(baseURL)
-                        .post('/pool')
-                        .send(payload)
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', 'application/json')
-                        .expect(200)
-                        .end(function (err, res) {
-                            if (err) return done(err);
-                            shouldBeExpectedPoolResponse(res, pool.name, pool.members);
-                            return done();
-                        });
-                });
-            });
-        });
-
-        pools.forEach(function (pool) {
             describe('GET /pool/' + pool.name, function () {
                 it('should respond ' + pool.members, function (done) {
                     request(baseURL)
@@ -135,7 +137,7 @@ describe("/pool", function () {
                         .expect(200)
                         .end(function (err, res) {
                             if (err) return done(err);
-                            res.body.sort().should.deep.equal(pool.members.sort());
+                            res.body.sort().should.deep.equal(pool.members);
                             return done();
                         });
                 });
@@ -145,7 +147,9 @@ describe("/pool", function () {
 
 
     describe("/pool member operations", function () {
+
         pools.forEach(function (pool) {
+
             before(function (done) {
                 request(baseURL)
                     .put('/pool/' + pool.name)
@@ -159,54 +163,66 @@ describe("/pool", function () {
                     });
             });
 
-            describe('POST /pool/' + pool.name, function () {
+            describe('POST /pool/' + pool.name + '/lock', function () {
                 it('should return a lock', function (done) {
-                    request(baseURL)
-                        .post('/pool/' + pool.name + '/lock')
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', 'application/json')
-                        .expect(200)
-                        .end(function (err, res) {
-                            if (err) return done(err);
-                            res.body.should.be.an('string');
-                            res.body.should.match(/.+/);
-                            return done();
-                        });
+                    shouldReturnALockConcurrent(pool, 3, done);
                 });
             });
 
             describe('DELETE /pool/' + pool.name + '/lock/:resource', function () {
-                var lockResponse = 'UNSET';
 
-                before(function (done) {
+                it('should release a lock over the :resource', function (done) {
                     request(baseURL)
                         .post('/pool/' + pool.name + '/lock')
                         .set('Accept', 'application/json')
                         .expect('Content-Type', 'application/json')
                         .expect(200)
                         .end(function (err, res) {
-                            if (err) console.log('ERROR IN THE SET UP. lock pool ' + pool.name);
+                            if (err) console.log('ERROR IN THE SET UP. locking pool ' + pool.name);
                             res.body.should.be.an('string');
                             res.body.should.match(/.+/);
-                            lockResponse = res.body;
-                            done();
-                        });
-                });
-
-                it('should release a lock over the resource ' + lockResponse, function (done) {
-                    request(baseURL)
-                        .delete('/pool/' + pool.name + '/lock/' + lockResponse)
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', 'application/json')
-                        .expect(200)
-                        .end(function (err, res) {
-                            if (err) return done(err);
-                            res.body.should.be.empty;
-                            return done();
+                            pool.members.should.include(res.body);
+                            var lockResponse = res.body;
+                            request(baseURL)
+                                .delete('/pool/' + pool.name + '/lock/' + lockResponse)
+                                .set('Accept', 'application/json')
+                                .expect('Content-Type', 'application/json')
+                                .expect(200)
+                                .end(function (err, res) {
+                                    if (err) return done(err);
+                                    res.body.should.be.empty;
+                                    return done();
+                                });
                         });
                 });
             });
         });
+    });
+
+    describe("/pool concurrent tests", function () {
+        this.timeout(15000);
+        var guidDataset = require('./guid.json');
+        var pool = {name: 'guid', members: guidDataset};
+
+        before(function (done) {
+            request(baseURL)
+                .put('/pool/' + pool.name)
+                .send(pool.members)
+                .expect('Content-Type', 'application/json')
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) console.log('ERROR IN THE SET UP. pool ' + pool.name);
+                    res.body.should.deep.equal(pool.members);
+                    return done();
+                });
+        });
+
+        describe('POST /pool/' + pool.name + '/lock', function () {
+            it('should return a lock', function (done) {
+                shouldReturnALockConcurrent(pool, 8, done);
+            });
+        });
+
     });
 });
 

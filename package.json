@@ -3,14 +3,18 @@
   "version": "0.0.1",
   "main": "server.js",
   "scripts": {
+    "build": "./node_modules/.bin/babel app -d target/app",
+    "clean": "./node_modules/.bin/rimraf target/*",
     "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log server.js",
     "stop": "./node_modules/.bin/forever stop server.js",
     "status": "./node_modules/.bin/forever list",
     "test": "./node_modules/.bin/mocha -R spec test/server.js test/**/*.js",
     "coverage": "./node_modules/.bin/istanbul cover _mocha --  -R spec test/server.js test/**/*.js",
-    "ci-test": "./node_modules/.bin/mocha -R xunit test/server.js test/**/*.js > test-reports.xml",
+    "ci-test": "./node_modules/.bin/mocha -R xunit test/server.js test/**/*.js > target/test-reports.xml",
     "pretest": "npm run lint",
-    "lint": "./node_modules/.bin/jshint *.js */*.js"
+    "lint": "./node_modules/.bin/jshint ./app/**",
+    "metrics:plato": "./node_modules/.bin/plato -r -d target/report target/app",
+    "metrics": "npm run build && npm run metrics:plato"
   },
   "dependencies": {
     "bluebird": "^3.2.1",
@@ -27,6 +31,9 @@
     "restify-errors": "^3.1.0"
   },
   "devDependencies": {
+    "async": "^1.5.2",
+    "babel-cli": "^6.5.1",
+    "babel-preset-es2015": "^6.5.0",
     "chai": "^3.5.0",
     "gulp": "^3.9.0",
     "gulp-jshint": "^2.0.0",
