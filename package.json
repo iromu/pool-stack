@@ -1,11 +1,11 @@
 {
   "name": "pool-stack",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "server.js",
   "scripts": {
     "build": "./node_modules/.bin/babel app -d target/app",
     "clean": "./node_modules/.bin/rimraf target/*",
-    "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log server.js",
+    "start": "node server.js",
     "stop": "./node_modules/.bin/forever stop server.js",
     "status": "./node_modules/.bin/forever list",
     "test": "./node_modules/.bin/mocha -R spec test/server.js test/**/*.js",
@@ -21,7 +21,6 @@
     "bunyan": "^1.5.1",
     "bunyan-prettystream": "hadfieldn/node-bunyan-prettystream",
     "config": "^1.19.0",
-    "forever": "^0.15.1",
     "hiredis": "^0.4.1",
     "json5": "^0.4.0",
     "log4js": "^0.6.31",
