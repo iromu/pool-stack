@@ -135,3 +135,11 @@ Hold build artifacts on CI
     npm pack
     
     
+
+## Docker
+
+`docker-compose up` runs the application, a redis instance and HA proxy as load balancer.
+`docker-compose scale app=3` creates two more instances of the application.
+
+The application wil run behind the load balancer, listening on port 80 of your selected docker machine.
+
