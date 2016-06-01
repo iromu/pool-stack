@@ -39,7 +39,7 @@ function createServer(logger) {
 
     server.on('NotFound', function (req, res, next) {
         if (logger) {
-            logger.debug('404', 'No route that matches request for ' + req.url);
+            logger.debug('404', 'No route that matches request for ' + req.method + ' ' + req.url);
         }
         res.send(404, req.url + ' was not found');
     });
@@ -53,7 +53,9 @@ function createServer(logger) {
 
     if (logger) server.on('after', restify.auditLogger({log: logger}));
 
-    if (logger) {repository.setLogger(logger);}
+    if (logger) {
+        repository.setLogger(logger);
+    }
 
     routes(server, repository, logger);
 

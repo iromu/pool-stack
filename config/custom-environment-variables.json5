@@ -1,0 +1,19 @@
+/**
+ * Env configuration file
+ */
+{
+  server: {
+    port: "APP_PORT",
+    // if false, only uses cluster if NODE_ENV is set to production
+    // if true, always uses cluster
+    cluster: "APP_CLUSTER_ENABLED",
+    // defines the value for the Server response header
+    // if blank or undefined, uses the package name
+    name: "APP_NAME"
+  },
+  redis: {
+    url: "REDIS_URL",
+    prefix: "REDIS_PREFIX",
+    purgeOnLoad: "REDIS_PURGEONLOAD"
+  }
+}

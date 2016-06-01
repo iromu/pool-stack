@@ -1,0 +1,12 @@
+/**
+ * Docker configuration file
+ */
+{
+  logging: {
+    // log directory
+    dir: "CONSOLE",
+    // for valid log levels, see
+    // [bunyan docs](https://github.com/trentm/node-bunyan#levels)
+    level: "debug"
+  }
+}
