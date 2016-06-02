@@ -1,8 +1,9 @@
-.git
-target
-coverage
-logs
-.idea
-test
-node_modules
-*.tgz
+.*
+*
+!config/default.json5
+!config/docker.json5
+!config/custom-environment-variables.json5
+!config/local.json5.example
+!app
+!server.js
+!package.json
