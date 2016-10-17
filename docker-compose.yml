@@ -1,0 +1,22 @@
+version: '2'
+services:
+
+  web:
+    build: ./
+    environment:
+      - TCP_PORTS=8080
+      - BALANCE=source
+    links:
+      - redis
+
+  redis:
+    image: redis:latest
+
+  lb:
+    image: dockercloud/haproxy
+    links:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 83:8080
