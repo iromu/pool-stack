@@ -64,7 +64,7 @@ This project uses:
 - [config](https://github.com/lorenwest/node-config) and [json5](
   http://json5.org) for configuration
 - [bunyan](https://github.com/trentm/node-bunyan) for logging
-- [mocha](http://visionmedia.github.io/mocha/) and [supertest](
+- [mocha](http://mochajs.org/) and [supertest](
   https://github.com/visionmedia/supertest) for testing
 - [cluster](http://nodejs.org/docs/latest/api/cluster.html) for managing workers
 - [redis](http://redis.io) for caching and storing data
