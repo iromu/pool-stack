@@ -25,13 +25,14 @@ node('node') {
        stage('Test'){
              env.NODE_ENV = "test"
              sh 'yarn ci-test'
-            post {
-                always {
-                    archive "target/**/*"
-                    junit 'target/test-reports.xml'
-                }
-            }
        }
+
+        post {
+            always {
+                archive "target/**/*"
+                junit 'target/test-reports.xml'
+            }
+        }
     }
     catch (err) {
         currentBuild.result = "FAILURE"
