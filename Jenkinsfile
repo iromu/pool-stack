@@ -11,19 +11,16 @@ node('node') {
           echo 'Initializing...'
           def node = tool name: 'Node-8.4.0', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
           env.PATH = "${node}/bin:${env.PATH}"
-          env.NODE_ENV = "test"
           sh 'node -v'
           sh 'yarn install'
         }
 
        stage('Build'){
-         env.NODE_ENV = "test"
          sh 'node -v'
          sh 'yarn build'
        }
 
        stage('Test'){
-             env.NODE_ENV = "test"
              sh 'yarn ci-test'
        }
 
