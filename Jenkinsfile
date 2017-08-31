@@ -23,10 +23,8 @@ node('node') {
        }
 
        stage('Test'){
-           steps {
              env.NODE_ENV = "test"
              sh 'yarn ci-test'
-           }
             post {
                 always {
                     archive "target/**/*"
