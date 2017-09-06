@@ -1,39 +1,46 @@
-node('node') {
-    currentBuild.result = "SUCCESS"
+pipeline {
+    agent any
 
-    try {
-
-       stage('Checkout'){
-          checkout scm
-       }
+    stages  {
 
         stage('Initialize') {
-          echo 'Initializing...'
-          def node = tool name: 'Node-8.4.0', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
-          env.PATH = "${node}/bin:${env.PATH}"
-          sh 'node -v'
-          sh 'yarn install'
+          steps {
+            script {
+              def node = tool name: 'Node-8.4.0', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
+              env.PATH = "${node}/bin:${env.PATH}"
+            }
+            sh 'node -v'
+            sh 'yarn install'
+          }
         }
 
        stage('Build'){
-         sh 'node -v'
-         sh 'yarn build'
+         steps {
+            sh 'yarn build'
+         }
        }
 
        stage('Test'){
-             sh 'yarn ci-test'
+         steps {
+            sh 'yarn plato'
+            sh 'jenkins-mocha --compilers js:babel-register --cobertura test/*.spec.js'
+            junit 'artifacts/test/xunit.xml'
+         }
        }
 
-        post {
-            always {
-                archive "target/**/*"
-                junit 'target/test-reports.xml'
-            }
-        }
-    }
-    catch (err) {
-        currentBuild.result = "FAILURE"
-        throw err
-    }
+       stage('Archive'){
+         steps {
+            sh 'yarn pack'
+            archiveArtifacts '*.tgz'
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'report/plato', reportFiles: 'index.html', reportName: 'Plato Report', reportTitles: ''])
+         }
+       }
 
+       stage('Cleanup'){
+         steps {
+            cleanWs()
+         }
+       }
+
+    }
 }
