@@ -22,7 +22,7 @@ pipeline {
 
        stage('Test'){
          steps {
-            sh 'yarn plato'
+            sh 'yarn metrics:plato'
             sh 'jenkins-mocha --compilers js:babel-register --cobertura test/*.spec.js'
             junit 'artifacts/test/xunit.xml'
          }
