@@ -23,7 +23,7 @@ pipeline {
        stage('Test'){
          steps {
             sh 'yarn metrics:plato'
-            sh 'NODE_ENV=test jenkins-mocha --compilers js:babel-register --cobertura test/server.js test/**/*.js'
+            sh 'jenkins-mocha --compilers js:babel-register --cobertura test/server.js test/**/*.js'
             junit 'artifacts/test/xunit.xml'
          }
        }
