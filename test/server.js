@@ -35,19 +35,14 @@ before(function (done) {
         logger.info('%s listening at %s', server.name, server.url);
     });
 
-    server.on('NotFound', function (req, res, next) {
-        if (logger) {
-            logger.debug('404', 'TEST No route that matches request for ' + req.method + ' ' + req.url);
-        }
+    server.on('NotFound', function (req, res, next, done) {
         res.send(404, req.url + ' was not found');
-        return next();
+        return done();
     });
 
-    server.on('uncaughtException', function (req, res, route, err) {
-        if (logger) {
-            logger.error('Uncaught error', err);
-        }
+    server.on('uncaughtException', function (req, res, route, err, done) {
         res.send(500, 'Error');
+        return done();
     });
 
     global.baseURL = 'http://localhost:' + port;

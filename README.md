@@ -14,6 +14,15 @@
 [dev-dep-url]: https://david-dm.org/iromu/pool-stack#info=devDependencies&view=table
 
 
+
+[![Build Status](http://img.shields.io/travis/iromu/pool-stack.svg?style=flat)](http://travis-ci.org/iromu/pool-stack)
+[![Dependencies](http://img.shields.io/david/iromu/pool-stack.svg?style=flat)](https://david-dm.org/iromu/pool-stack)
+[![Dev dependencies](http://img.shields.io/david/dev/iromu/pool-stack.svg?style=flat)](https://david-dm.org/iromu/pool-stack)
+[![Peer dependencies](http://img.shields.io/david/peer/iromu/pool-stack.svg?style=flat)](https://david-dm.org/iromu/pool-stack)
+[![Known Vulnerabilities](https://snyk.io/package/npm/pool-stack/badge.svg)](https://snyk.io/package/npm/pool-stack)
+
+
+
 This project runs a RESTful server, providing endpoints for acquiring and releasing "locks" over a pool of "resources".
 See `test/routes/pool.js` for the full set of implemented endpoints.
 
@@ -43,13 +52,17 @@ Release the lock over the resource "4" from pool "A"
 The lock ownership is optimistic within this api, and a purge mechanism can be implemented, 
 with only knowing the resource and pool name.
         
+        
 ## What's for
 
+
 ### Microcontrollers. Internet of Things, mesh networks
+
 
 Leverages the use of the Pessimistic Locking pattern for low powered devices, without external libraries.
 Arduino, Trinket, ESP8266,..
 Pools can represent sensor buckets, and the locking can be orchestated from any peer.
+
 
 ### Resource Locking. Continous Integration, Delivery, Provisioning
 

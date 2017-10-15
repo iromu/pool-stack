@@ -190,7 +190,7 @@ describe("/pool", function () {
                                 .expect(200)
                                 .end(function (err, res) {
                                     if (err) return done(err);
-                                    res.body.should.be.empty;
+                                    !res.body || res.body.should.be.empty;
                                     return done();
                                 });
                         });

@@ -12,6 +12,14 @@ var bluebird = require('bluebird');
 bluebird.onPossiblyUnhandledRejection(function (err) {
     throw err;
 });
+var corsMiddleware = require('restify-cors-middleware');
+var cors = corsMiddleware({
+    preflightMaxAge: 5, //Optional
+    origins: ['*'],
+    allowHeaders: ['API-Token'],
+    exposeHeaders: ['API-Token-Expiry']
+})
+
 
 exports.createServer = createServer;
 
@@ -31,11 +39,12 @@ function createServer(logger) {
 
     var server = restify.createServer(settings);
 
+    server.pre(cors.preflight);
+    server.use(cors.actual);
     server.pre(restify.pre.pause());
-    server.use(restify.acceptParser(server.acceptable));
-    server.use(restify.queryParser());
-    server.use(restify.CORS());
-    server.use(restify.bodyParser({mapParams: false}));
+    server.use(restify.plugins.acceptParser(server.acceptable));
+    server.use(restify.plugins.queryParser());
+    server.use(restify.plugins.bodyParser({mapParams: false}));
 
     server.on('NotFound', function (req, res, next) {
         if (logger) {
@@ -51,7 +60,7 @@ function createServer(logger) {
         return res.send(500, 'Error');
     });
 
-    if (logger) server.on('after', restify.auditLogger({log: logger}));
+    if (logger) server.on('after', restify.plugins.auditLogger({event: 'routed', log: logger}));
 
     if (logger) {
         repository.setLogger(logger);

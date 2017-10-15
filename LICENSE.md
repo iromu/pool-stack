@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2016 Ivan Rodriguez Murillo
+Copyright (c) 2017 Ivan Rodriguez Murillo
 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
